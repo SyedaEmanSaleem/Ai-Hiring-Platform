@@ -1,144 +1,381 @@
-```markdown
-# AI Hiring Platform
+# 🤖 AI Hiring Platform
 
-An end-to-end AI-powered hiring pipeline that automatically:
-1. **Screens resumes** against a job's requirements
-2. **Generates interview questions** (technical, skill-gap, behavioral)
-3. **Conducts AI interviews**
-4. **Scores candidates**
-5. **Generates hiring reports** (Markdown per candidate + summary CSV ranking)
+An end-to-end AI-powered recruitment platform built with **Python** and **Flask** that automates the hiring process—from resume screening to interview evaluation and hiring reports.
 
-Two ways to use it:
-- **`app.py`** — a website: a hiring manager fills in the job, uploads a resume (PDF/DOCX/TXT), fills in the candidate's interview answers in the browser, and gets a scored report instantly. **This is what most people want.**
-- **`main.py`** — a terminal/script version for batch processing or automation.
+The platform can:
 
-No external API key or paid service is required — it runs fully offline using keyword/rule-based logic. There's an optional plug-in point to use a real LLM for smarter question generation and answer scoring.
+- 📄 Screen resumes against job requirements
+- 🎯 Match candidate skills with job requirements
+- ❓ Generate technical, behavioral, and skill-gap interview questions
+- 💬 Conduct AI-assisted interviews
+- 📊 Score candidate performance
+- 📑 Generate detailed hiring reports
+- 📈 Rank candidates on a recruiter dashboard
 
-Candidate data is persisted to a local **SQLite database** (`hiring_platform.db`), so nothing is lost when you restart the server.
+> **Works completely offline by default.** No OpenAI API key or paid services are required. You can optionally integrate any LLM (OpenAI, Gemini, Ollama, Claude, etc.) later.
 
-## 🌐 Run the website (recommended)
+---
 
-```bash
-git clone <this-repo-url>
-cd ai-hiring-platform
-pip3 install -r requirements.txt --break-system-packages   # omit the flag on Windows/Mac
-python3 app.py
-```
-Then open **http://127.0.0.1:5000** in your browser.
+# ✨ Features
 
-Flow:
-1. Fill in the job title + required/preferred skills → upload a resume file (`.pdf`, `.docx`, or `.txt`) → click **Upload & Screen Resume**.
-2. You'll see the screening results plus a generated interview question set. Type in the candidate's answers (from a real interview call, or typed live during one) → click **Submit Interview & Generate Report**.
-3. You'll land on a full hiring report with the final score and recommendation, plus a **Download report (.md)** link.
-4. Visit **Dashboard** (top-right) any time to see every candidate ranked side by side — this data survives server restarts.
+- Resume Upload (`PDF`, `DOCX`, `TXT`)
+- AI Resume Screening
+- Skill & Experience Extraction
+- Job Matching
+- Automatic Interview Question Generation
+- AI Interview Evaluation
+- Candidate Scoring
+- Hiring Recommendation
+- Markdown Report Generation
+- CSV Candidate Ranking
+- Recruiter Dashboard
+- SQLite Database Storage
+- Offline Mode
+- Optional LLM Support
 
-## Project structure
-```
+---
+
+# 🏗️ Project Structure
+
+```text
 ai-hiring-platform/
-├── app.py                   # 🌐 Flask website (run this for the UI)
-├── main.py                  # Terminal/script pipeline (batch/demo use)
-├── db.py                    # SQLite persistence layer
-├── models.py                # Candidate & JobRequirement data classes
-├── resume_screener.py       # Skill/experience/education extraction + scoring
-├── file_reader.py           # Extracts text from uploaded PDF/DOCX/TXT resumes
-├── question_generator.py    # Builds tailored interview question sets
-├── interview_conductor.py   # Runs the interview, scores answers
-├── candidate_scorer.py      # Combines scores into a final recommendation
-├── report_generator.py      # Markdown reports + CSV summary
-├── llm_client.py            # Optional LLM plug-in (disabled by default)
-├── templates/                # HTML pages for the website
-├── uploads/                   # Uploaded resume files land here
+│
+├── app.py                     # Flask Web Application
+├── main.py                    # Command Line Version
+├── db.py                      # SQLite Database
+├── models.py                  # Candidate & Job Models
+├── resume_screener.py         # Resume Screening Engine
+├── file_reader.py             # PDF/DOCX/TXT Reader
+├── question_generator.py      # Interview Question Generator
+├── interview_conductor.py     # Interview Evaluation
+├── candidate_scorer.py        # Final Candidate Scoring
+├── report_generator.py        # Markdown & CSV Reports
+├── llm_client.py              # Optional LLM Integration
 ├── requirements.txt
-├── hiring_platform.db        # SQLite database (created automatically)
-└── hiring_reports/          # Generated reports (created automatically)
+├── hiring_platform.db
+│
+├── templates/
+├── static/
+├── uploads/
+└── hiring_reports/
 ```
 
-## Quick start (terminal/script version)
+---
+
+# 🚀 Installation
+
+## 1. Clone the Repository
+
 ```bash
+git clone https://github.com/SyedaEmanSaleem/ai-hiring-platform.git
 cd ai-hiring-platform
-python3 main.py
-```
-This runs a self-contained demo with two sample candidates and prints progress to the terminal, then writes reports to `./hiring_reports/`.
-
-## Using it for real candidates
-
-### Option A: Use the website
-Just run `python3 app.py` and go through the upload → screen → interview → report flow in the browser. This is the easiest path for non-technical users.
-
-### Option B: Edit `main.py`
-Replace the `JOB` and `CANDIDATES` list at the top of `main.py` with your real job requirements and resume text. Set `INTERACTIVE = True` to type interview answers live in the terminal instead of using pre-supplied demo answers.
-
-### Option C: Import the modules in your own script
-```python
-from models import Candidate, JobRequirement
-from resume_screener import screen_resume
-from question_generator import generate_questions
-from interview_conductor import conduct_interview
-from candidate_scorer import compute_final_score
-from report_generator import save_candidate_report
-
-job = JobRequirement(
-    title="Data Analyst",
-    required_skills=["sql", "excel", "python"],
-    preferred_skills=["tableau", "power bi"],
-    min_experience_years=2,
-)
-
-candidate = Candidate(
-    candidate_id="C100",
-    name="Jane Doe",
-    email="jane@example.com",
-    resume_text=open("resumes/jane_doe.txt").read(),
-)
-
-screen_resume(candidate, job)
-questions = generate_questions(candidate, job)
-conduct_interview(candidate, questions, interactive=True)
-compute_final_score(candidate)
-save_candidate_report(candidate, job, "./hiring_reports")
 ```
 
-### Reading resumes from PDF/DOCX
-The website (`app.py`) handles this automatically via `file_reader.py`. If you're using `main.py` or your own script, extract the text first:
+## 2. Install Dependencies
+
 ```bash
-pip install pypdf python-docx
+pip install -r requirements.txt
 ```
+
+## 3. Start the Web Application
+
+```bash
+python app.py
+```
+
+Open your browser:
+
+```
+http://127.0.0.1:5000
+```
+
+---
+
+# 💻 Run the Terminal Version
+
+```bash
+python main.py
+```
+
+---
+
+# 🌐 Web Application Workflow
+
+### 1️⃣ Upload Resume
+
+- Enter Job Title
+- Required Skills
+- Preferred Skills
+- Minimum Experience
+- Candidate Information
+- Upload Resume (`PDF`, `DOCX`, `TXT`)
+
+↓
+
+### 2️⃣ Resume Screening
+
+The system automatically:
+
+- Extracts Skills
+- Detects Experience
+- Matches Skills
+- Calculates Resume Score
+
+↓
+
+### 3️⃣ Interview
+
+AI generates:
+
+- Technical Questions
+- Behavioral Questions
+- Skill Gap Questions
+
+Enter candidate responses directly in the browser.
+
+↓
+
+### 4️⃣ Candidate Evaluation
+
+The platform evaluates:
+
+- Resume Score
+- Interview Performance
+- Technical Knowledge
+- Communication Quality
+
+↓
+
+### 5️⃣ Hiring Report
+
+Generate:
+
+- Final Score
+- Hiring Recommendation
+- Markdown Report
+- Candidate Ranking
+
+---
+
+# 📊 Scoring Pipeline
+
+```
+Resume Upload
+      │
+      ▼
+Resume Screening
+      │
+      ▼
+Question Generation
+      │
+      ▼
+Interview Evaluation
+      │
+      ▼
+Final Candidate Score
+      │
+      ▼
+Hiring Report
+```
+
+---
+
+# 📂 Supported Resume Formats
+
+- PDF
+- DOCX
+- TXT
+
+---
+
+# 📁 Generated Files
+
+The application automatically creates:
+
+```
+uploads/
+```
+
+Uploaded resumes
+
+```
+hiring_reports/
+```
+
+- Candidate Markdown Reports
+- Hiring Summary CSV
+
+```
+hiring_platform.db
+```
+
+SQLite Database
+
+---
+
+# 💾 Database
+
+The application stores:
+
+- Candidates
+- Resume Scores
+- Interview Questions
+- Interview Answers
+- Final Scores
+- Hiring Recommendations
+
+All data is stored locally using **SQLite**.
+
+---
+
+# 🧠 AI Features
+
+- Resume Parsing
+- Skill Extraction
+- Experience Detection
+- Candidate Ranking
+- AI Interview Generation
+- Interview Scoring
+- Hiring Recommendation
+- Automated Report Generation
+
+---
+
+# 🔌 Optional LLM Integration
+
+The project includes **llm_client.py** for integrating:
+
+- OpenAI GPT
+- Google Gemini
+- Ollama
+- Anthropic Claude
+- Azure OpenAI
+- Any OpenAI-Compatible API
+
+Simply implement `call_llm()` and enable:
+
 ```python
-from pypdf import PdfReader
-text = "\n".join(p.extract_text() for p in PdfReader("resume.pdf").pages)
+USE_LLM = True
 ```
 
-## Data storage
-Candidates, their screening results, generated questions, and interview answers are all stored in `hiring_platform.db` (SQLite), created automatically on first run. To start fresh, just delete this file — a new empty database will be created the next time the app starts.
+The platform automatically switches from rule-based logic to LLM-powered evaluation.
 
-## Customizing scoring & questions
-- **Skill vocabulary**: edit `SKILL_VOCABULARY` in `resume_screener.py`.
-- **Screening weight formula**: edit `score_against_job()` in `resume_screener.py` (currently 60% required skills / 20% preferred skills / 20% experience).
-- **Question bank**: edit `TECHNICAL_BANK` and `BEHAVIORAL_BANK` in `question_generator.py` to add questions for more skills/roles.
-- **Final weighting**: edit `SCREENING_WEIGHT` / `INTERVIEW_WEIGHT` in `candidate_scorer.py` (currently 40% screening / 60% interview).
-- **Recommendation thresholds**: edit `RECOMMENDATION_TIERS` in `candidate_scorer.py`.
+---
 
-## Upgrading to a real LLM (optional)
-By default everything runs on rule-based logic so it works with zero setup. To use an LLM for more natural question generation and semantic answer scoring:
-1. Open `llm_client.py`.
-2. Implement `call_llm()` with your provider's SDK (an example is sketched in the comments).
-3. Set `USE_LLM = True` at the top of `llm_client.py`.
+# ⚙️ Customization
 
-`question_generator.py` and `interview_conductor.py` will automatically use the LLM path when available, falling back to rule-based logic if the call fails.
+You can easily customize:
 
-## Going to production
-If you want to actually deploy this for real hiring use beyond local testing, consider:
-- Switching from SQLite to Postgres/MySQL for a multi-user, higher-volume deployment.
-- Running it with a production server instead of Flask's dev server, e.g. `pip install gunicorn && gunicorn app:app`.
-- Adding login/authentication so only your hiring team can access it.
-- Storing uploaded resumes securely and defining a data-retention policy.
-- Reviewing applicable employment/hiring-law requirements in your jurisdiction around automated candidate scoring and decision-making.
+- Resume Scoring Formula
+- Required Skills
+- Interview Questions
+- Candidate Ranking Logic
+- Hiring Thresholds
+- Recommendation Categories
 
-## Notes
-- This is a starter/reference implementation meant to be extended — the resume parsing and scoring logic are intentionally simple and transparent so you can see and adjust exactly how scores are computed.
-- For production use with real candidate data, add authentication and review any applicable employment/hiring-law compliance requirements (e.g. around automated decision-making in hiring) for your jurisdiction.
+---
 
-## License
-MIT (or update to whatever license you'd like to use)
+# 📈 Dashboard
+
+The dashboard provides:
+
+- Candidate Rankings
+- Resume Scores
+- Interview Scores
+- Final Scores
+- Hiring Recommendations
+
+---
+
+# 🛠️ Tech Stack
+
+| Technology | Purpose |
+|------------|---------|
+| Python | Backend |
+| Flask | Web Framework |
+| SQLite | Database |
+| HTML5 | Frontend |
+| CSS3 | Styling |
+| Jinja2 | Templates |
+| PyPDF | PDF Parsing |
+| python-docx | DOCX Parsing |
+
+---
+
+# 🚀 Future Improvements
+
+- User Authentication
+- Recruiter Accounts
+- PostgreSQL/MySQL Support
+- Voice Interviews
+- Video Interviews
+- AI Resume Summarization
+- Email Notifications
+- Analytics Dashboard
+- Docker Deployment
+- REST API
+- Multi-user Support
+- Cloud Deployment
+
+---
+
+# 📸 Screenshots
+
+Add screenshots here after deployment.
+
+Example:
+
+```
+screenshots/home.png
+
+screenshots/screening.png
+
+screenshots/report.png
+
+screenshots/dashboard.png
 ```
 
+---
+
+# 🤝 Contributing
+
+Contributions are welcome!
+
+1. Fork the repository
+2. Create a new branch
+
+```bash
+git checkout -b feature-name
+```
+
+3. Commit your changes
+
+```bash
+git commit -m "Add feature"
+```
+
+4. Push your branch
+
+```bash
+git push origin feature-name
+```
+
+5. Open a Pull Request
+
+---
+
+# 📜 License
+
+This project is licensed under the **MIT License**.
+
+---
+
+# 👨‍💻 Author
+
+**Syeda Eman Saleem**
+
+Built with ❤️ using **Python**, **Flask**, and **AI** to automate the recruitment process.
+
+---
+
+## ⭐ If you found this project helpful, don't forget to star the repository!
